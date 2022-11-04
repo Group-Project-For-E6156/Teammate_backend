@@ -43,30 +43,30 @@ def browse_team_info_by_input(course_id, team_id):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/add/team_name=<team_name>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
+@app.route("/team/add/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
            methods=["POST", "GET"])
-def add_team(team_name, team_captain, course_id, number_needed=0, team_message=""):
-    result= TeamResource.add_team(team_name, team_captain, course_id, number_needed, team_message)
+def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+    result= TeamResource.add_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team CREATED", status=200, content_type="text/plain")
     else:
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/edit/team_name=<team_name>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
+@app.route("/team/edit/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
            methods=["POST", "GET"])
-def edit_team(team_name, team_captain, course_id, number_needed=0, team_message=""):
-    result= TeamResource.edit_team(team_name, team_captain, course_id, number_needed, team_message)
+def edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+    result= TeamResource.edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team UPDATED", status=200, content_type="text/plain")
     else:
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/delete/team_id=<team_id>&course_id=<course_id>",
+@app.route("/team/delete/team_id=<team_id>&team_captain_uni=<team_captain_uni>&course_id=<course_id>",
            methods=["POST", "GET"])
-def delete_team(team_id, course_id):
-    result = TeamResource.delete_team(team_id, course_id)
+def delete_team(team_captain_uni, course_id,team_id):
+    result = TeamResource.delete_team(team_captain_uni, course_id,team_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")
     else:
