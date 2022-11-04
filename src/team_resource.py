@@ -13,14 +13,12 @@ class TeamResource:
 
     @staticmethod
     def _get_connection():
-
-        usr = "root"
-        pw = ""
+        user = "root"
+        password = "han990219"
         h = "localhost"
-
         conn = pymysql.connect(
-            user=usr,
-            password=pw,
+            user=user,
+            password=password,
             host=h,
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
@@ -28,15 +26,19 @@ class TeamResource:
         return conn
 
     @staticmethod
-    def browse_all_team(course_id):
+    def browse_all_team(course_id, limit, offset):
         if not (course_id):
             return False, "Please fill in all blanks!"
-        sql = "SELECT * From teammate_db.Team WHERE Course_id = %s"
+        sql1 = "SELECT * FROM teammate_db.Team WHERE Course_id = %s";
+        sql2 = "SELECT * From teammate_db.Team WHERE Course_id = %s LIMIT %s OFFSET %s"
         conn = TeamResource._get_connection()
         cur = conn.cursor()
-        cur.execute(sql, args=(course_id))
+        res = cur.execute(sql1, args=(course_id))
         records = cur.fetchall()
-        return records
+        length = len(records)
+        cur.execute(sql2, args=(course_id, int(limit), int(offset)))
+        records = cur.fetchall()
+        return length, records
 
     @staticmethod
     def browse_team_info_by_input(course_id, team_id):
@@ -108,13 +110,13 @@ class TeamResource:
         records = cur.fetchall()
         if len(records) < 1:
             return False
-        sql2 = "DELETE FROM teammate_db.Team where Team_Captain_Uni = %s and Course_id = %s";
-        cur.execute(sql2, args=(team_captain_uni, course_id))
-        sql3 = """
+        sql2 = """
             DELETE FROM teammate_db.StudentsInTeam 
                     where Team_id = %s
                 """;
-        cur.execute(sql3, args=team_id)
+        cur.execute(sql2, args=team_id)
+        sql3 = "DELETE FROM teammate_db.Team where Team_Captain_Uni = %s and Course_id = %s";
+        cur.execute(sql3, args=(team_captain_uni, course_id))
         return True
 
     @staticmethod

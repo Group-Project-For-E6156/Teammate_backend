@@ -25,9 +25,9 @@ def get_health():
     return result
 
 
-@app.route("/team/course_id=<course_id>", methods=["get"])
-def browse_all_team(course_id):
-    result = TeamResource.browse_all_team(course_id)
+@app.route("/team/course_id=<course_id>/limit=<limit>&offset=<offset>", methods=["get"])
+def browse_all_team(course_id, limit, offset):
+    result = TeamResource.browse_all_team(course_id, limit, offset)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
