@@ -46,7 +46,7 @@ def browse_team_info_by_input(course_id, team_captain_uni):
 @app.route("/team/add/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
            methods=["POST", "GET"])
 def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
-    result= TeamResource.add_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
+    result = TeamResource.add_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team CREATED", status=200, content_type="text/plain")
     else:
@@ -82,9 +82,9 @@ def browse_all_team_member(team_id, course_id):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/add_member/uni=<uni>&team_id=<team_id>&course_id=<course_id>", methods=["get"])
-def add_team_member(uni, team_id, course_id):
-    result = TeamResource.add_team_member(uni, team_id, course_id)
+@app.route("/team/add_member/uni=<uni>&student_name=<student_name>&team_id=<team_id>&course_id=<course_id>", methods=["get"])
+def add_team_member(uni, student_name, team_id, course_id):
+    result = TeamResource.add_team_member(uni, student_name, team_id, course_id)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
@@ -93,7 +93,7 @@ def add_team_member(uni, team_id, course_id):
 
 @app.route("/team/delete_member/uni=<uni>&team_id=<team_id>&course_id=<course_id>",
            methods=["POST", "GET"])
-def delete_team_member(uni, team_id, course_id):
+def delete_team_member(uni,  team_id, course_id):
     result = TeamResource.delete_team_member(uni, team_id, course_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")

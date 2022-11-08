@@ -14,7 +14,7 @@ class TeamResource:
     @staticmethod
     def _get_connection():
         user = "root"
-        password = ""
+        password = "zzzz2222"
         h = "localhost"
         conn = pymysql.connect(
             user=user,
@@ -59,21 +59,31 @@ class TeamResource:
         conn = TeamResource._get_connection()
         cur = conn.cursor()
         sql1 = """
-                SELECT * From teammate_db.Team 
-                WHERE Team_Captain_Uni = %s and Course_id = %s
-                """
+                    SELECT * From teammate_db.Team 
+                    WHERE Team_Captain_Uni = %s and Course_id = %s
+                    """
         cur.execute(sql1, args=(team_captain_uni, course_id))
         records = cur.fetchall()
         if len(records) >= 1:
             return False, "DUPLICATED TEAM"
 
         sql2 = """
-                 insert into teammate_db.Team (Team_Name, Team_Captain_Uni, Team_Captain, Course_id, Number_needed, Team_message)
-                 values (%s, %s, %s, %s, %s, %s);
-                """
+                      insert into teammate_db.Team (Team_Name, Team_Captain_Uni, Team_Captain, Course_id, Number_needed, Team_message)
+                      values (%s, %s, %s, %s, %s, %s);
+                     """
         cur.execute(sql2, args=(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message))
+        sql3 = """
+              Insert into teammate_db.StudentsInTeam  (Uni, Student_Name, Team_id, Course_id)
+              values (%s, %s, (SELECT Team_id
+                            FROM teammate_db.Team
+                            where Team_Captain_Uni=%s
+                            and Course_id=%s
+                                ), %s);
+               """
+        cur.execute(sql3, args=(team_captain_uni, team_captain, team_captain_uni, course_id, course_id))
         result = cur.rowcount
         return True if result == 1 else False
+
 
     @staticmethod
     def edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
@@ -129,31 +139,31 @@ class TeamResource:
         return result
 
     @staticmethod
-    def add_team_member(uni, team_id, course_id):
-        if not (uni and team_id and course_id):
+    def add_team_member(uni, student_name, team_id, course_id):
+        if not (uni and student_name and team_id and course_id):
             return False, "Please fill in all blanks!"
         uni = uni.strip()
         conn = TeamResource._get_connection()
         cur = conn.cursor()
         sql1 = """
                 SELECT * From teammate_db.StudentsInTeam 
-                WHERE Uni = %s and Team_id = %s and Course_id = %s 
+                WHERE Uni = %s and Student_Name = %s and Team_id = %s and Course_id = %s 
                 """
-        cur.execute(sql1, args=(uni, team_id, course_id))
+        cur.execute(sql1, args=(uni, student_name, team_id, course_id))
         records = cur.fetchall()
         if len(records) >= 1:
             return False, "DUPLICATED MEMBER"
         sql2 = """
-                 insert into teammate_db.StudentsInTeam  (Uni, Team_id, Course_id)
-                 values (%s, %s, %s);
+                 insert into teammate_db.StudentsInTeam  (Uni, Student_Name, Team_id, Course_id)
+                 values (%s, %s, %s, %s);
                 """
-        cur.execute(sql2, args=(uni, team_id, course_id))
+        cur.execute(sql2, args=(uni, student_name, team_id, course_id))
         result = cur.rowcount
         return True if result == 1 else False
 
     @staticmethod
     def delete_team_member(uni, team_id, course_id):
-        if not (course_id and team_id and uni):
+        if not (uni and team_id and course_id):
             return False
         sql1 = """
         SELECT * From teammate_db.StudentsInTeam WHERE Uni = %s and Team_id = %s and Course_id = %s
@@ -164,6 +174,6 @@ class TeamResource:
         records = cur.fetchall()
         if len(records) < 1:
             return False
-        sql2 = "DELETE FROM teammate_db.StudentsInTeam WHERE Uni = %s and Team_id = %s and Course_id = %s";
+        sql2 = "DELETE FROM teammate_db.StudentsInTeam WHERE Uni = %s  and Team_id = %s and Course_id = %s";
         cur.execute(sql2, args=(uni, team_id, course_id))
         return True
