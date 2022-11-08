@@ -34,9 +34,9 @@ def browse_all_team(course_id, limit, offset):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/team_id=<team_id>&course_id=<course_id>", methods=["get"])
-def browse_team_info_by_input(course_id, team_id):
-    result = TeamResource.browse_team_info_by_input(course_id, team_id)
+@app.route("/team/team_captain_uni=<team_captain_uni>&course_id=<course_id>", methods=["get"])
+def browse_team_info_by_input(course_id, team_captain_uni):
+    result = TeamResource.browse_team_info_by_input(course_id, team_captain_uni)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:

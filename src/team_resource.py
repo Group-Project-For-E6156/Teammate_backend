@@ -14,7 +14,7 @@ class TeamResource:
     @staticmethod
     def _get_connection():
         user = "root"
-        password = "han990219"
+        password = ""
         h = "localhost"
         conn = pymysql.connect(
             user=user,
@@ -41,13 +41,13 @@ class TeamResource:
         return length, records
 
     @staticmethod
-    def browse_team_info_by_input(course_id, team_id):
-        if not (course_id and team_id):
+    def browse_team_info_by_input(course_id, team_captain_uni):
+        if not (course_id and team_captain_uni):
             return False, "Please fill in all blanks!"
-        sql = "SELECT * From teammate_db.Team WHERE Course_id = %s and Team_id = %s"
+        sql = "SELECT * From teammate_db.Team WHERE Course_id = %s and team_captain_uni = %s"
         conn = TeamResource._get_connection()
         cur = conn.cursor()
-        cur.execute(sql, args=(course_id, team_id))
+        cur.execute(sql, args=(course_id, team_captain_uni))
         records = cur.fetchall()
         return records
 
