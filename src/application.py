@@ -46,6 +46,16 @@ def browse_team_info_by_input(course_id, team_captain_uni):
 @app.route("/team/add/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
            methods=["POST", "GET"])
 def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
     result = TeamResource.add_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team CREATED", status=200, content_type="text/plain")
@@ -56,6 +66,16 @@ def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed
 @app.route("/team/edit/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
            methods=["POST", "GET"])
 def edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
     result= TeamResource.edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team UPDATED", status=200, content_type="text/plain")
@@ -66,6 +86,16 @@ def edit_team(team_name, team_captain_uni, team_captain, course_id, number_neede
 @app.route("/team/delete/team_id=<team_id>&team_captain_uni=<team_captain_uni>&course_id=<course_id>",
            methods=["POST", "GET"])
 def delete_team(team_captain_uni, course_id,team_id):
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
     result = TeamResource.delete_team(team_captain_uni, course_id,team_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")
@@ -94,6 +124,16 @@ def add_team_member(uni, student_name, team_id, course_id):
 @app.route("/team/delete_member/uni=<uni>&team_id=<team_id>&course_id=<course_id>",
            methods=["POST", "GET"])
 def delete_team_member(uni,  team_id, course_id):
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
     result = TeamResource.delete_team_member(uni, team_id, course_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")
@@ -102,7 +142,15 @@ def delete_team_member(uni,  team_id, course_id):
     return rsp
 
 
+@app.route("/team/find_my_teammate/uni=<uni>&course_id=<course_id>", methods=["get"])
+def find_my_teammate(uni, course_id):
+    result = TeamResource.find_my_teammate(uni, course_id)
+    if result:
+        rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("NOT FOUND", status=404, content_type="text/plain")
+    return rsp
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5011)
+    app.run(host="127.0.0.1", port=2233)
