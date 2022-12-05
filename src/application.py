@@ -25,18 +25,11 @@ def get_health():
     return result
 
 
-@app.route("/team/course_id=<course_id>/limit=<limit>&offset=<offset>", methods=["get"])
-def browse_all_team(course_id, limit, offset):
+@app.route("/team/", methods=["GET"])
+def browse_all_team(course_id = "", limit = "", offset = ""):
+    if "course_id" in request.args and "limit" in request.args and "offset" in request.args:
+        course_id, limit, offset = request.args['course_id'], request.args['limit'], request.args['offset']
     result = TeamResource.browse_all_team(course_id, limit, offset)
-    if result:
-        rsp = Response(json.dumps(result), status=200, content_type="application.json")
-    else:
-        rsp = Response("NOT FOUND", status=404, content_type="text/plain")
-    return rsp
-
-@app.route("/team/team_captain_uni=<team_captain_uni>&course_id=<course_id>", methods=["get"])
-def browse_team_info_by_input(course_id, team_captain_uni):
-    result = TeamResource.browse_team_info_by_input(course_id, team_captain_uni)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
