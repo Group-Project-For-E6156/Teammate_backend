@@ -14,17 +14,16 @@ class TeamResource:
     @staticmethod
     def _get_connection():
         user = "root"
-        password = ""
+        password = "han990219"
         h = "localhost"
         conn = pymysql.connect(
-            user=user,
-            password=password,
-            host=h,
+            user = user,
+            password = password,
+            host = h,
             cursorclass=pymysql.cursors.DictCursor,
             autocommit=True
         )
         return conn
-
     @staticmethod
     def browse_all_team(course_id, limit, offset):
         if not (course_id):
