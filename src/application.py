@@ -36,9 +36,19 @@ def browse_all_team(course_id = "", limit = "", offset = ""):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/add/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
-           methods=["POST", "GET"])
-def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+@app.route("/team/add/",methods=["POST", "GET"])
+def add_team():
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
+    team_name, team_captain_uni, team_captain, course_id, number_needed, team_message = request_data['team_name'], request_data['team_captain_uni'], request_data['team_captain'], request_data['course_id'], request_data['number_needed'], request_data['team_message']
     result, message = TeamResource.add_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team CREATED", status=200, content_type="text/plain")
@@ -46,9 +56,19 @@ def add_team(team_name, team_captain_uni, team_captain, course_id, number_needed
         rsp = Response(message, status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/edit/team_name=<team_name>&team_captain_uni=<team_captain_uni>&team_captain=<team_captain>&course_id=<course_id>&number_needed=<number_needed>&team_message=<team_message>",
-           methods=["POST", "GET"])
-def edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed=0, team_message=""):
+@app.route("/team/edit/",methods=["POST", "GET"])
+def edit_team():
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
+    team_name, team_captain_uni, team_captain, course_id, number_needed, team_message = request_data['team_name'], request_data['team_captain_uni'], request_data['team_captain'], request_data['course_id'], request_data['number_needed'], request_data['team_message']
     result= TeamResource.edit_team(team_name, team_captain_uni, team_captain, course_id, number_needed, team_message)
     if result:
         rsp = Response("Team UPDATED", status=200, content_type="text/plain")
