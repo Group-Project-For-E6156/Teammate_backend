@@ -76,10 +76,20 @@ def edit_team():
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/delete/team_id=<team_id>&team_captain_uni=<team_captain_uni>&course_id=<course_id>",
-           methods=["POST", "GET"])
-def delete_team(team_captain_uni, course_id,team_id):
-    result = TeamResource.delete_team(team_captain_uni, course_id,team_id)
+@app.route("/team/delete/", methods=["POST", "GET"])
+def delete_team():
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
+    team_captain_uni, course_id, team_id = request_data["team_captain_uni"], request_data["course_id"], request_data["team_id"]
+    result = TeamResource.delete_team(team_captain_uni, course_id, team_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")
     else:
