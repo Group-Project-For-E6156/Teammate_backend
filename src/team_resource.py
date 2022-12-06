@@ -185,18 +185,13 @@ class TeamResource:
         return True
 
     @staticmethod
-    def find_my_teammate(uni, course_id):
+    def find_my_teammate(dept, timezone):
         sql = '''
-        with temp as (select * from students_login_db.students_profile
-        where major in (SELECT prefered_Dept FROM courseswork_6156.Student_preferences
-        where Uni= %s)
-        and timezone in  (SELECT prefered_Timezone FROM courseswork_6156.Student_preferences where Uni= %s))
-        select *
-        from temp
-        where temp.uni in (select uni from courseswork_6156.Student_preferences where Course_id= %s)
+        Select * From students_login_db.students_profile
+        where timezone = %s and major = %s
         '''
         conn = TeamResource._get_connection()
         cur = conn.cursor()
-        cur.execute(sql, args=(uni, uni, course_id))
+        cur.execute(sql, args=(timezone, dept))
         result = cur.fetchall()
         return result

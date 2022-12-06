@@ -27,8 +27,10 @@ def get_health():
 
 @app.route("/team/", methods=["GET"])
 def browse_all_team(course_id = "", limit = "", offset = ""):
+    print(request.args)
     if "course_id" in request.args and "limit" in request.args and "offset" in request.args:
         course_id, limit, offset = request.args['course_id'], request.args['limit'], request.args['offset']
+    print(course_id, limit, offset)
     result = TeamResource.browse_all_team(course_id, limit, offset)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
@@ -161,10 +163,11 @@ def delete_team_member():
 
 
 @app.route("/team/find_my_teammate/", methods=["get"])
-def find_my_teammate(course_id = "", uni = ""):
-    if "course_id" in request.args and "uni" in request.args:
-        course_id, uni = request.args['course_id'], request.args['uni']
-    result = TeamResource.find_my_teammate(uni, course_id)
+def find_my_teammate(dept = "", timezone = ""):
+    if "dept" in request.args and "timezone" in request.args:
+        dept, timezone = request.args['dept'], request.args['timezone']
+    result = TeamResource.find_my_teammate(dept, timezone)
+    print(result)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
