@@ -82,7 +82,10 @@ class TeamResource:
                """
         cur.execute(sql3, args=(team_captain_uni, team_captain, team_captain_uni, course_id, course_id))
         result = cur.rowcount
-        return True, "Success" if result == 1 else False, "Add Team failed"
+        if result == 1:
+            return True, "Success"
+        else:
+            return False, "Add Team failed"
 
 
     @staticmethod
@@ -159,7 +162,10 @@ class TeamResource:
                 """
         cur.execute(sql2, args=(uni, student_name, team_id, course_id))
         result = cur.rowcount
-        return True if result == 1 else False
+        if result == 1:
+            return True, "Success"
+        else:
+            return False, "Failure"
 
     @staticmethod
     def delete_team_member(uni, team_id, course_id):
@@ -191,6 +197,6 @@ class TeamResource:
         '''
         conn = TeamResource._get_connection()
         cur = conn.cursor()
-        cur.execute(sql)
+        cur.execute(sql, args=(uni, uni, course_id))
         result = cur.fetchall()
         return result

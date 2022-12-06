@@ -36,6 +36,17 @@ def browse_all_team(course_id = "", limit = "", offset = ""):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
+@app.route("/team/info/", methods=["get"])
+def browse_team_info_by_input(course_id = "", team_captain_uni = ""):
+    if "course_id" in request.args and "team_captain_uni" in request.args:
+        course_id, team_captain_uni = request.args['course_id'], request.args['team_captain_uni']
+    result = TeamResource.browse_team_info_by_input(course_id, team_captain_uni)
+    if result:
+        rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("NOT FOUND", status=404, content_type="text/plain")
+    return rsp
+
 @app.route("/team/add/",methods=["POST", "GET"])
 def add_team():
     if request.is_json:
@@ -96,8 +107,10 @@ def delete_team():
         rsp = Response("No existed Preference is found!", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/team_member/team_id=<team_id>&course_id=<course_id>", methods=["get"])
-def browse_all_team_member(team_id, course_id):
+@app.route("/team/team_member/", methods=["get"])
+def browse_all_team_member(team_id = "", course_id = ""):
+    if "course_id" in request.args and "team_id" in request.args:
+        course_id, team_id = request.args['course_id'], request.args['team_id']
     result = TeamResource.get_all_team_member(team_id, course_id)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
@@ -105,8 +118,19 @@ def browse_all_team_member(team_id, course_id):
         rsp = Response("NOT FOUND", status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/add_member/uni=<uni>&student_name=<student_name>&team_id=<team_id>&course_id=<course_id>", methods=["get"])
-def add_team_member(uni, student_name, team_id, course_id):
+@app.route("/team/add_member/", methods=["POST"])
+def add_team_member():
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
+    uni, student_name, team_id, course_id = request_data["uni"], request_data["student_name"], request_data["team_id"], request_data["course_id"]
     result, message = TeamResource.add_team_member(uni, student_name, team_id, course_id)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
@@ -114,9 +138,20 @@ def add_team_member(uni, student_name, team_id, course_id):
         rsp = Response(message, status=404, content_type="text/plain")
     return rsp
 
-@app.route("/team/delete_member/uni=<uni>&team_id=<team_id>&course_id=<course_id>",
-           methods=["POST", "GET"])
-def delete_team_member(uni,  team_id, course_id):
+@app.route("/team/delete_member/",methods=["POST"])
+def delete_team_member():
+    if request.is_json:
+        try:
+            request_data = request.get_json()
+        except ValueError:
+            return Response("[COURSE] UNABLE TO RETRIEVE REQUEST", status=400, content_type="text/plain")
+    else:
+        return Response("[COURSE] INVALID POST FORMAT: SHOULD BE JSON", status=400, content_type="text/plain")
+    if not request_data:
+        rsp = Response("[COURSE] INVALID INPUT", status=404, content_type="text/plain")
+        return rsp
+    uni, team_id, course_id = request_data["uni"], request_data["team_id"], request_data["course_id"]
+    print(uni, team_id, course_id)
     result = TeamResource.delete_team_member(uni, team_id, course_id)
     if result:
         rsp = Response("DELETE SUCCESS", status=200, content_type="application.json")
@@ -125,10 +160,11 @@ def delete_team_member(uni,  team_id, course_id):
     return rsp
 
 
-@app.route("/team/find_my_teammate/uni=<uni>&course_id=<course_id>", methods=["get"])
-def find_my_teammate(uni, course_id):
+@app.route("/team/find_my_teammate/", methods=["get"])
+def find_my_teammate(course_id = "", uni = ""):
+    if "course_id" in request.args and "uni" in request.args:
+        course_id, uni = request.args['course_id'], request.args['uni']
     result = TeamResource.find_my_teammate(uni, course_id)
-    print(result)
     if result:
         rsp = Response(json.dumps(result), status=200, content_type="application.json")
     else:
