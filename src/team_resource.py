@@ -13,9 +13,9 @@ class TeamResource:
 
     @staticmethod
     def _get_connection():
-        user = "root"
-        password = "han990219"
-        h = "localhost"
+        user = "admin"
+        password = "1234567890"
+        h = "e6156.coxz1yzswsen.us-east-1.rds.amazonaws.com"
         conn = pymysql.connect(
             user = user,
             password = password,
