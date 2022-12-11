@@ -10,6 +10,10 @@ app = Flask(__name__)
 CORS(app)
 
 
+@app.route("/", methods = ['GET'])
+def init():
+    return "hello world"
+
 @app.get("/api/health")
 def get_health():
     t = str(datetime.now())
@@ -175,5 +179,4 @@ def find_my_teammate(dept = "", timezone = ""):
     return rsp
 
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=2233)
+app.run(host="0.0.0.0", port=2233)
